@@ -7,18 +7,17 @@ const morgan = require("morgan");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const path=require("path")
-dotenv.config();
+dotenv.config({path:"./config/.env"});
 const postRoute = require("./routes/post");
 const uploadImgRoute=require("./routes/uploadimg")
 // const stateRoute=require("./routes/state")
 // const districtRoute=require("./routes/districts")
 // const stateUpdate=require("./routes/statesOpration")
 
-dotenv.config();
 // console.log(process.env.MONGO_URL);
 const con = async () => {
   const conn = await mongoose.connect(
-    "mongodb+srv://skharse:abcd@cluster0.wvvlk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    process.env.DB_URL,
     { useNewUrlParser: true, useUnifiedTopology: true }
     // (err, data) => {
     //   console.log(err);

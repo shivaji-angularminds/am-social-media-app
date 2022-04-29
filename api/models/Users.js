@@ -13,14 +13,14 @@ const UserSchema = new mongoose.Schema(
        },
     email: {
       type: String,
-      required: true,
+      require: true,
       max: 50,
       unique: true,
      
     },
     password: {
       type: String,
-      required: true,
+      require: true,
       min: 6,
     },
     profilePicture: {
@@ -42,11 +42,17 @@ const UserSchema = new mongoose.Schema(
       
     },
     gender:{
-        type:String
+        type:String,
+        require:true
     },
     mobile: {
       type: Number,
     },
+    username:{
+      type:String,
+      require:true
+      
+    }
   },
   { timestamps: true }
 );

@@ -1,17 +1,33 @@
 const User = require("../models/Users");
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const validateToken=require("../middleware/verifyToken")
 
 //update user
-router.put("/:id", async (req, res) => {
+router.put("/:id",validateToken, async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
-    if (req.body.password) {
+    if (req.body.password && req.body.gender && req.body.username ) {
       try {
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
       } catch (err) {
         return res.status(500).json(err);
       }
+    }else{
+      //check required things
+      let str="please provide following things"
+      if(!req.body.gender){
+        str=str+" "+ "gender"
+      }
+      if(!req.body.username){
+        str=str+" " +"username"
+      }
+      if(!req.body.password){
+        str=str+" " +"password"
+      }
+      
+      return res.status(403).json(str);
+
     }
     try {
       const user = await User.findByIdAndUpdate(req.params.id, {
@@ -41,7 +57,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 //get a user
-router.get("/:id", async (req, res) => {
+router.get("/:id",validateToken, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     const { password, updatedAt, ...other } = user._doc;
@@ -49,9 +65,12 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
-});
+}
+);
 
-router.get("/", async (req, res) => {
+
+//get all users
+router.get("/",validateToken, async (req, res) => {
   try {
     const user = await User.find();
     
