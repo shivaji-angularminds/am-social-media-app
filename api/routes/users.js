@@ -38,14 +38,20 @@ router.put("/:id",validateToken,imageUpload.single('image'), async (req, res) =>
 
     }
     try {
+      console.log(req.body)
       const user = await User.findByIdAndUpdate(req.params.id, {
         $set: {...req.body,profilePicture:req.file.path},
       });
+      console.log("bye")
+
+      //dfvdfvdfbd
       res.status(200).json({
         user:user,
         message:"info updated successfully"
       });
     } catch (err) {
+      console.log(err)
+
       return res.status(500).json(err);
     }
   } else {

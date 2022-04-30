@@ -15,6 +15,7 @@ const generateToken=(user)=>{
 
 //REGISTER
 router.post("/sign-up", async (req, res) => {
+  console.log("hello")
   try {
     // generate new password
     let {error}=userValidation(req.body)
