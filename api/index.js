@@ -9,7 +9,6 @@ const authRoute = require("./routes/auth");
 const path=require("path")
 dotenv.config({path:"./config/.env"});
 const postRoute = require("./routes/post");
-const uploadImgRoute=require("./routes/uploadimg")
 // const stateRoute=require("./routes/state")
 // const districtRoute=require("./routes/districts")
 // const stateUpdate=require("./routes/statesOpration")
@@ -37,8 +36,7 @@ app.use(morgan("common"));
 
 app.use("/", authRoute);
 app.use("/edit-profile", userRoute);
-app.use("/posts", postRoute);
-app.use("/api/uploadimg",uploadImgRoute)
+app.use("/api/posts", postRoute);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 

@@ -42,7 +42,7 @@ console.log(error)
     const user = await newUser.save();
     return res.status(200).json({
       user:user,  
-        status:"sign up successfully"
+        message:"sign up successfully"
     });
   }
   
@@ -68,7 +68,7 @@ const tok=generateToken(user)
     res.status(200).json({
       user:user,   
       token:tok,
-       status:"login successfully"
+       message:"login successfully"
     });
   } catch (err) {
     res.status(500).json(err);
