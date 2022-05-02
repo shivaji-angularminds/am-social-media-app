@@ -1,26 +1,50 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, TextField, FormControl, FormControlLabel, RadioGroup, Radio} from '@mui/material'
 import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { DatePicker } from "@mui/lab";
 import Header from './header'
+import axios from 'axios';
 
 
 const EditProfile = () => {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [picture, setPicture] = useState({file:[]});
-  const [getUser, setGetUser] = useState("");
+  const [getUser, setGetUser] = useState();
   const [isSucces, setSuccess] = useState(null);
 
   const token=JSON.parse(localStorage.getItem('token'));
   //console.log(token);
 
   const userId=JSON.parse(localStorage.getItem('userId'));
+  //console.log(userId)
+
+  const getSpecificUser= async ()=>{
+    try{
+    const res= await axios.get(`http://localhost:8800/user/${userId}`, {
+      headers: {
+        'authorization': token
+      }
+    });
+    //console.log( res.data);
+    setGetUser(res.data);    
+    }
+    catch(e) {
+        console.log("error", e);
+    }
+}
+
+useEffect(()=>{
+  getSpecificUser();
+},[]);
+
+
+
 
   const addPicture=(event)=>{
     setPicture({
@@ -42,37 +66,32 @@ const EditProfile = () => {
   const editProfile = async (e) => {
       e.preventDefault();
      const formdata = new FormData(); 
-    formdata.append('image', picture.file);
+    formdata.append('image', picture.file);                           // upload image in "image" key of database by using formData
     //console.log(formdata);
+   // console.log("profile",getUser.firstname)
 
-    const getSpecificUser = async ()=>{
-      fetch(`http://localhost:8800/user/${userId}`)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res)
-        setGetUser(res)
-      })
-    }
-    console.log("getUser",getUser);
 
       const  editData={
-            name, bio, gender, dob, email, mobile, picture:picture.file
+            username,
+            bio, gender, dob, 
+            email, 
+            mobile, picture:picture.file
         }
-       // console.log("editData",editData);
+        //console.log("editData",editData);
 
-    // const res= await fetch(`http://localhost:8800/user/edit-profile/${userId}`,{
-    //       method:"POST",
-    //       headers:{
-    //         "Content-Type":"application/json",
-    //         authorization: token
-    //       },  
-    //       body: JSON.stringify({
-    //         name, bio, gender, dob, email, mobile, picture:picture.file
-    //       })
-    //     });
+    const res= await fetch(`http://localhost:8800/user/edit-profile/${userId}`,{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            'authorization': token
+          },  
+          body: JSON.stringify({
+            username, bio, gender, dob, email, mobile, picture:picture.file
+          })
+        });
 
-    //     const data = await res.json();
-    //     console.log("data",data);
+        const data = await res.json();
+        console.log("data",data);
 
         // if(data.user) 
         // {
@@ -96,7 +115,7 @@ const EditProfile = () => {
             <Button onClick={editPicture}>Edit</Button>
             <Button onClick={removePicture}>Remove</Button>
           </div>
-          <TextField variant='outlined' label="Name" sx={{ width: 270 }} id="name" value={name} onChange={(e) => { setName(e.target.value) }} required></TextField><br /><br />
+          <TextField variant='outlined' label="UserName" sx={{ width: 270 }} id="username" value={username} onChange={(e) => { setUsername(e.target.value) }} required></TextField><br /><br />
           <TextField variant='outlined' label="Bio" sx={{ width: 270 }} id="bio" value={bio} onChange={(e) => { setBio(e.target.value) }} required></TextField><br /><br />
           <FormControl>
                             <label className='label'>Gender:</label>
