@@ -1,63 +1,70 @@
 const User = require("../models/Users");
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
-const validateToken=require("../middleware/verifyToken")
-const imageUpload=require("../middleware/uploadimg")
-
+const validateToken = require("../middleware/verifyToken");
+const imageUpload = require("../middleware/uploadimg");
 
 //update user
-router.put("/:id",validateToken,imageUpload.single('image'), async (req, res) => {
-  if (req.body.userId === req.params.id || req.body.isAdmin) {
-    if (req.body.password && req.body.gender && req.body.username ) {
+router.put(
+  "/:id",
+  validateToken,
+  imageUpload.single("image"),
+  async (req, res) => {
+    if (req.body.userId === req.params.id || req.body.isAdmin) {
+      if (req.body.password && req.body.gender && req.body.username) {
+        try {
+          const salt = await bcrypt.genSalt(10);
+          req.body.password = await bcrypt.hash(req.body.password, salt);
+        } catch (err) {
+          return res.status(500).json(err);
+        }
+      } else {
+        //check required things
+        let str = {
+          flag1: true,
+          flag2: true,
+          flag3: true,
+        };
+        if (!req.body.gender) {
+          str.flag1 = false;
+        }
+        if (!req.body.username) {
+          str.flag2 = false;
+        }
+        if (!req.body.password) {
+          str.flag3 = false;
+        }
+
+        return res.status(403).json({
+          message: [
+            !str.flag1 && "please provide gender",
+            !str.flag2 && "please provide username",
+            !str.flag3 && "please provide password",
+          ],
+        });
+      }
       try {
-        const salt = await bcrypt.genSalt(10);
-        req.body.password = await bcrypt.hash(req.body.password, salt);
+        console.log(req.body);
+        const user = await User.findByIdAndUpdate(req.params.id, {
+          $set: { ...req.body, profilePicture: req.file.path },
+        });
+        console.log("bye");
+
+        //dfvdfvdfbd
+        res.status(200).json({
+          user: user,
+          message: "info updated successfully",
+        });
       } catch (err) {
+        console.log(err);
+
         return res.status(500).json(err);
       }
-    }else{
-      //check required things
-      let str={
-        flag1:true,
-        flag2:true,
-        flag3:true
-      }
-      if(!req.body.gender){
-        str.flag1=false
-      }
-      if(!req.body.username){
-        str.flag2=false
-      }
-      if(!req.body.password){
-        str.flag3=false
-      }
-      
-      return res.status(403).json({
-        message:[!str.flag1 && "please provide gender",!str.flag2 && "please provide username" , !str.flag3 && "please provide password"]
-      });
-
+    } else {
+      return res.status(403).json("You can update only your account!");
     }
-    try {
-      console.log(req.body)
-      const user = await User.findByIdAndUpdate(req.params.id, {
-        $set: {...req.body,profilePicture:req.file.path},
-      });
-      console.log("bye")
-
-      //dfvdfvdfbd
-      res.status(200).json({
-        user:user,
-        message:"info updated successfully"
-      });
-    } catch (err) {
-      console.log(err)
-
-      return res.status(500).json(err);
-    }
-  } else {
-    return res.status(403).json("You can update only your account!");
   }
-});
+);
 
 //delete user
 router.delete("/:id", async (req, res) => {
@@ -74,7 +81,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 //get a user
-router.get("/:id",validateToken, async (req, res) => {
+router.get("/:id", validateToken, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     const { password, updatedAt, ...other } = user._doc;
@@ -82,76 +89,62 @@ router.get("/:id",validateToken, async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
-}
-);
+});
 
+// delete profile picture
+router.put("/deleteProfilePicture/:id", validateToken, async (req, res) => {
+  if (req.body.userId === req.params.id ) {
+    
+
+      try {
+        
+        const user = await User.findByIdAndUpdate(req.params.id,{
+          $set: {  profilePicture:"" },
+        })
+
+        res.status(200).json({
+          message:"profile picture deleted successfully"
+        })
+  
+     
+      } catch (err) {
+        return res.status(500).json({ success: false, message: err });
+      }
+    
+  } else {
+    return res.status(403).json("You can update only your account!");
+  }
+});
 
 //get all users
-router.get("/",validateToken, async (req, res) => {
+router.get("/", validateToken, async (req, res) => {
   try {
     const user = await User.find();
-    
+
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
   }
 });
-
-//change password
-router.put("/changepassword/:id",validateToken, async (req, res) => {
-  if (req.body.userId === req.params.id || req.body.isAdmin) {
-    if (req.body.previousPassword && req.body.newPassword  ) {
+//edit profile profilePicture
+router.put("/editProfilePicture/:id", validateToken,imageUpload.single('image'), async (req, res) => {
+  if (req.body.userId === req.params.id ) {
     
-      
-        const user = await User.findByIdAndUpdate(req.params.id);
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(req.body.previousPassword, salt);
-        
-        try{
-          bcrypt.compare(req.body.previousPassword, user.password, async function(err, res1) {
-           console.log("hello")
-            if (res1){
-              let newHashed=await bcrypt.hash(req.body.newPassword, salt);
-              console.log(res1)
-              await user.updateOne({ $set: { password: newHashed}});
-              res.status(200).json({
-                user:user,
-                message:"info updated successfully"
-              })            }
-             else {
-              // response is OutgoingMessage object that server response http request
-              return res.json({success: false, message: 'please provide correct password'});
-            }
-          });       
-         }
-         catch(err){
-          return res.status(500).json({success: false, message: err});
 
-         }
+      try {
         
+        const user = await User.findByIdAndUpdate(req.params.id,{
+          $set: {  profilePicture:req.file.path },
+        })
 
-        
-       
-      
-    }else{
-      //check required things
-      let str={
-        flag1:true,
-        flag2:true,
+        res.status(200).json({
+          message:"profile picture edited successfully"
+        })
+  
+     
+      } catch (err) {
+        return res.status(500).json({ success: false, message: err });
       }
-      if(!req.body.previousPassword){
-        str.flag1=false
-      }
-      if(!req.body.newPassword){
-        str.flag2=false
-      }
-      
-      
-      return res.status(403).json({
-        message:[!str.flag1 && "please provide previousPassword",!str.flag2 && "please provide newPassword",!str.flag3 ]
-      });
-
-    }
     
   } else {
     return res.status(403).json("You can update only your account!");
@@ -159,8 +152,65 @@ router.put("/changepassword/:id",validateToken, async (req, res) => {
 });
 
 
+//change password
+router.put("/changepassword/:id", validateToken, async (req, res) => {
+  if (req.body.userId === req.params.id || req.body.isAdmin) {
+    if (req.body.previousPassword && req.body.newPassword) {
+      const user = await User.findByIdAndUpdate(req.params.id);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(req.body.previousPassword, salt);
 
+      try {
+        bcrypt.compare(
+          req.body.previousPassword,
+          user.password,
+          async function (err, res1) {
+            console.log("hello");
+            if (res1) {
+              let newHashed = await bcrypt.hash(req.body.newPassword, salt);
+              console.log(res1);
+              await user.updateOne({ $set: { password: newHashed } });
+              res.status(200).json({
+                user: user,
+                message: "info updated successfully",
+              });
+            } else {
+              // response is OutgoingMessage object that server response http request
+              return res.json({
+                success: false,
+                message: "please provide correct password",
+              });
+            }
+          }
+        );
+      } catch (err) {
+        return res.status(500).json({ success: false, message: err });
+      }
+    } else {
+      //check required things
+      let str = {
+        flag1: true,
+        flag2: true,
+      };
+      if (!req.body.previousPassword) {
+        str.flag1 = false;
+      }
+      if (!req.body.newPassword) {
+        str.flag2 = false;
+      }
 
+      return res.status(403).json({
+        message: [
+          !str.flag1 && "please provide previousPassword",
+          !str.flag2 && "please provide newPassword",
+          !str.flag3,
+        ],
+      });
+    }
+  } else {
+    return res.status(403).json("You can update only your account!");
+  }
+});
 
 //follow a user
 
@@ -187,23 +237,23 @@ router.put("/:id/follow", async (req, res) => {
 //unfollow a user
 
 router.put("/:id/unfollow", async (req, res) => {
-    if (req.body.userId !== req.params.id) {
-      try {
-        const user = await User.findById(req.params.id);
-        const currentUser = await User.findById(req.body.userId);
-        if (user.followers.includes(req.body.userId)) {
-          await user.updateOne({ $pull: { followers: req.body.userId } });
-          await currentUser.updateOne({ $pull: { followings: req.params.id } });
-          res.status(200).json("user has been unfollowed");
-        } else {
-          res.status(403).json("you dont follow this user");
-        }
-      } catch (err) {
-        res.status(500).json(err);
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await User.findById(req.params.id);
+      const currentUser = await User.findById(req.body.userId);
+      if (user.followers.includes(req.body.userId)) {
+        await user.updateOne({ $pull: { followers: req.body.userId } });
+        await currentUser.updateOne({ $pull: { followings: req.params.id } });
+        res.status(200).json("user has been unfollowed");
+      } else {
+        res.status(403).json("you dont follow this user");
       }
-    } else {
-      res.status(403).json("you cant unfollow yourself");
+    } catch (err) {
+      res.status(500).json(err);
     }
-  });
+  } else {
+    res.status(403).json("you cant unfollow yourself");
+  }
+});
 
 module.exports = router;
