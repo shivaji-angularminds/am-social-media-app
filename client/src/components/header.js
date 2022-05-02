@@ -18,6 +18,7 @@ const settings = ['Profile', 'Reset Password', 'Logout'];
 
 const Header = () => {
     const navigate=useNavigate();
+    const userId=JSON.parse(localStorage.getItem('userId'));
     const signUp=()=>{
         navigate('/signup')
     }
@@ -42,10 +43,21 @@ const Header = () => {
       setAnchorElNav(null);
     };
   
-    const handleCloseUserMenu = (event) => {
-      // console.log(event.target);
-      navigate('/editprofile')
-      setAnchorElUser(null);
+    const handleCloseUserMenu = (setting) => {
+      if(setting === 'Profile') 
+      {
+        navigate(`/editprofile/${userId}`)
+      }
+      else if(setting === 'Reset Password') 
+      {
+        navigate(`/changepassword/${userId}`)
+      }
+      else if(setting === 'Logout') 
+      {
+        navigate(`/logout/${userId}`)
+      }
+       
+       setAnchorElUser(null);
     };
   
     return (
@@ -140,7 +152,7 @@ const Header = () => {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem key={setting} onClick={()=>handleCloseUserMenu(setting)}>
                     <Typography textAlign="center">{setting}</Typography>
                   </MenuItem>
                 ))}

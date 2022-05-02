@@ -11,43 +11,6 @@ const SignUp = () => {
   const [password, setPassword]=useState("");
   let [user,setUser]=useState([]);
 
-  const validateSignup = (user) => {
-    // console.log("fname",user.firstName)
-    // console.log("lname",user.lastName)
-    // console.log("email",user.email)
-    // console.log("password",user.password)
-    const errors = {};
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-    const pswdregex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})");
-
-    // if (!user.firstName) {
-    //   alert("First Name is Required");
-    //   return false;
-    // }
-    // else if (!user.lastName) {
-    //   alert("Last Name is Required");
-    //   return false;
-    // }
-    // else if (!user.email) {
-    //   alert("Email is Required");
-    //   return false;
-    // }
-    // else if (!regex.test(user.email)) {
-    //   alert("Plz Enter Valid Email");
-    //   return false;
-    // }
-    // else if (!pswdregex.test(user.password)) {
-    //   alert("Plz Enter Valid Password");
-    //   return false;
-    // }
-    // else {
-    //   return true;
-    // }
-
-
-
-  }
-
   const signUpDone = async (e) => {
     e.preventDefault();
     const newUser={
@@ -56,19 +19,10 @@ const SignUp = () => {
       email:email,
       password:password
     }
-    console.log(newUser);
+    //console.log(newUser);
     setUser([...user,newUser]);
-    console.log("temp",user);
 
-    if (validateSignup(user) === false) {
-      setFname('');
-      setLname('');
-      setEmail('');
-      setPassword('');
-    }
-    else {
-      alert(`${fname} SignUp Successfully`)
-      // localStorage.setItem('signupData', JSON.stringify(signupData));
+    // --------------------- post data from signup form ---------------------------------
         const res= await fetch("http://localhost:8800/user/sign-up",{
           method:"POST",
           headers:{
@@ -82,15 +36,14 @@ const SignUp = () => {
         const data = await res.json();
         console.log("data",data);
 
-        if(data.status === 500 || !data)
+        if(data.details)
         {
-          window.alert("Registration Failed");
-          console.log("Registration Failed");
-        } else {
-          window.alert("Registration Successful");
-          console.log("Registration Successful");
+          window.alert(data.details[0].message);
+        } 
+        else {
+          window.alert(data.message);
         }
-    }
+    //---------------------------------------------------------------------------------
 
   }
   const login = () => {

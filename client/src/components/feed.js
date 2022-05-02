@@ -31,7 +31,8 @@ const Feed = () => {
 
   const submit = async () =>{
     const formdata = new FormData(); 
-    formdata.append('avatar', userInfo.file);
+    formdata.append('avtar', userInfo.file);
+    console.log(formdata);
 
     axios.post("http://localhost:8800/api/uploadimg", formdata,{   
       headers: { "Content-Type": "multipart/form-data" } 

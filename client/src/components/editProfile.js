@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { Avatar, Button, TextField, FormControl, FormControlLabel, RadioGroup, Radio} from '@mui/material'
-import { height, width } from '@mui/system'
+import { Button, TextField, FormControl, FormControlLabel, RadioGroup, Radio} from '@mui/material'
 import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { DatePicker } from "@mui/lab";
@@ -14,16 +13,24 @@ const EditProfile = () => {
   const [dob, setDob] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
-  const [picture, setPicture] = useState("");
-  const [edit, setEdit] = useState("");
+  const [picture, setPicture] = useState({file:[]});
+  const [getUser, setGetUser] = useState("");
+  const [isSucces, setSuccess] = useState(null);
 
-  const addPicture=(e)=>{
-   // setPicture(e.target)
-   console.log("add",e.target)
-  }
+  const token=JSON.parse(localStorage.getItem('token'));
+  //console.log(token);
+
+  const userId=JSON.parse(localStorage.getItem('userId'));
+
+  const addPicture=(event)=>{
+    setPicture({
+      ...picture,
+      file:event.target.files[0].name
+    });
+   }
 
   const editPicture = (e) => {
-    setEdit(picture);
+    //setEdit(picture);
     console.log("edited",picture)
   }
 
@@ -32,13 +39,48 @@ const EditProfile = () => {
     console.log("removed",picture)
   }
 
-  const editProfile=()=>{
-    console.log("name",name)
-    console.log("bio",bio)
-    console.log("gender",gender)
-    console.log("dob",dob)
-    console.log("email",email)
-    console.log("mobile",mobile)
+  const editProfile = async (e) => {
+      e.preventDefault();
+     const formdata = new FormData(); 
+    formdata.append('image', picture.file);
+    //console.log(formdata);
+
+    const getSpecificUser = async ()=>{
+      fetch(`http://localhost:8800/user/${userId}`)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res)
+        setGetUser(res)
+      })
+    }
+    console.log("getUser",getUser);
+
+      const  editData={
+            name, bio, gender, dob, email, mobile, picture:picture.file
+        }
+       // console.log("editData",editData);
+
+    // const res= await fetch(`http://localhost:8800/user/edit-profile/${userId}`,{
+    //       method:"POST",
+    //       headers:{
+    //         "Content-Type":"application/json",
+    //         authorization: token
+    //       },  
+    //       body: JSON.stringify({
+    //         name, bio, gender, dob, email, mobile, picture:picture.file
+    //       })
+    //     });
+
+    //     const data = await res.json();
+    //     console.log("data",data);
+
+        // if(data.user) 
+        // {
+        //   window.alert(data.message);
+        // } 
+        // else {
+        //   window.alert(data);
+        // }
   }
 
   return (
@@ -49,7 +91,8 @@ const EditProfile = () => {
           <h1>Edit Profile</h1>
           <div className='profile-picture'>
             <label>Profile picture:</label>
-            <Button component="label" onClick={addPicture}> Add<input type="file" hidden /></Button>
+            {isSucces !== null ? <h4> {isSucces} </h4> :null }
+            <Button component="label" > Add<input type="file" onChange={addPicture} hidden /></Button>
             <Button onClick={editPicture}>Edit</Button>
             <Button onClick={removePicture}>Remove</Button>
           </div>
