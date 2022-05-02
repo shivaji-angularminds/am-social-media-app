@@ -3,6 +3,7 @@ const User = require("../models/Users");
 const bcrypt = require("bcrypt");
 const {userValidation}=require("./validation")
 const token=require("jsonwebtoken")
+const validateToken=require("../middleware/verifyToken")
 
 console.log(User);
 
@@ -71,6 +72,18 @@ const tok=generateToken(user)
       token:tok,
        message:"login successfully"
     });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+//get specific user info
+
+router.get("/:id", validateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    const { password, updatedAt, ...other } = user._doc;
+    res.status(200).json(other);
   } catch (err) {
     res.status(500).json(err);
   }
