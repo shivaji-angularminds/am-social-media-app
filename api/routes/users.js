@@ -11,7 +11,7 @@ router.put(
   imageUpload.single("image"),
   async (req, res) => {
     if (req.body.userId === req.params.id || req.body.isAdmin) {
-      if (req.body.password && req.body.gender && req.body.username) {
+      if (req.body.gender && req.body.username) {
         try {
           const salt = await bcrypt.genSalt(10);
           req.body.password = await bcrypt.hash(req.body.password, salt);
@@ -31,15 +31,12 @@ router.put(
         if (!req.body.username) {
           str.flag2 = false;
         }
-        if (!req.body.password) {
-          str.flag3 = false;
-        }
+       
 
         return res.status(403).json({
           message: [
             !str.flag1 && "please provide gender",
             !str.flag2 && "please provide username",
-            !str.flag3 && "please provide password",
           ],
         });
       }
