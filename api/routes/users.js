@@ -10,20 +10,32 @@ router.put(
   validateToken,
   imageUpload.single("image"),
   async (req, res) => {
-    if (req.body.userId === req.params.id || req.body.isAdmin) {
-      if (req.body.password && req.body.gender && req.body.username) {
+    if (req.body.userId === req.params.id ) {
+      if ( req.body.gender && req.body.username) {
         try {
-          const salt = await bcrypt.genSalt(10);
-          req.body.password = await bcrypt.hash(req.body.password, salt);
+          console.log(req.body);
+          const user = await User.findByIdAndUpdate(req.params.id, {
+            $set: { ...req.body, profilePicture: req.file.path },
+          });
+          console.log("bye");
+  
+          //dfvdfvdfbd
+          res.status(200).json({
+            user: user,
+            message: "info updated successfully",
+          });
         } catch (err) {
+          console.log(err);
+  
           return res.status(500).json(err);
         }
+       
       } else {
         //check required things
         let str = {
           flag1: true,
           flag2: true,
-          flag3: true,
+          
         };
         if (!req.body.gender) {
           str.flag1 = false;
@@ -31,35 +43,17 @@ router.put(
         if (!req.body.username) {
           str.flag2 = false;
         }
-        if (!req.body.password) {
-          str.flag3 = false;
-        }
+        
 
         return res.status(403).json({
           message: [
             !str.flag1 && "please provide gender",
             !str.flag2 && "please provide username",
-            !str.flag3 && "please provide password",
+            
           ],
         });
       }
-      try {
-        console.log(req.body);
-        const user = await User.findByIdAndUpdate(req.params.id, {
-          $set: { ...req.body, profilePicture: req.file.path },
-        });
-        console.log("bye");
-
-        //dfvdfvdfbd
-        res.status(200).json({
-          user: user,
-          message: "info updated successfully",
-        });
-      } catch (err) {
-        console.log(err);
-
-        return res.status(500).json(err);
-      }
+     
     } else {
       return res.status(403).json("You can update only your account!");
     }
