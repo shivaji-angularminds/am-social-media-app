@@ -10,7 +10,7 @@ router.put(
   validateToken,
   imageUpload.single("image"),
   async (req, res) => {
-    if (req.body.userId === req.params.id ) {
+    if (req.data.id === req.params.id ) {
       if ( req.body.gender && req.body.username) {
         try {
           console.log(req.body);
@@ -76,18 +76,22 @@ router.delete("/:id", async (req, res) => {
 
 //get a user
 router.get("/:id", validateToken, async (req, res) => {
+  if(req.data.id===req.params.id){
   try {
     const user = await User.findById(req.params.id);
     const { password, updatedAt, ...other } = user._doc;
     res.status(200).json(other);
   } catch (err) {
     res.status(500).json(err);
+  }}
+  else{
+    res.status(500).json("you can access your profile only");
   }
 });
 
 // delete profile picture
 router.put("/deleteProfilePicture/:id", validateToken, async (req, res) => {
-  if (req.body.userId === req.params.id ) {
+  if (req.data.id === req.params.id ) {
     
 
       try {
@@ -122,7 +126,7 @@ router.get("/", validateToken, async (req, res) => {
 });
 //edit profile profilePicture
 router.put("/editProfilePicture/:id", validateToken,imageUpload.single('image'), async (req, res) => {
-  if (req.body.userId === req.params.id ) {
+  if (req.data.id === req.params.id ) {
     
 
       try {
@@ -148,7 +152,7 @@ router.put("/editProfilePicture/:id", validateToken,imageUpload.single('image'),
 
 //change password
 router.put("/changepassword/:id", validateToken, async (req, res) => {
-  if (req.body.userId === req.params.id || req.body.isAdmin) {
+  if (req.data.id === req.params.id || req.body.isAdmin) {
     if (req.body.previousPassword && req.body.newPassword) {
       const user = await User.findByIdAndUpdate(req.params.id);
       const salt = await bcrypt.genSalt(10);

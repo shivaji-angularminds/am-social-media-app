@@ -45,6 +45,7 @@ const paginatedResults=require("../middleware/pagination")
 
 
 router.post("/create",validateToken,imageUpload.single('image'), async (req, res) => {
+  if(req.data.id===req.body.userId){
   console.log(req.body)
   const newPost = new Post({
     caption:req.body.caption,
@@ -60,6 +61,8 @@ router.post("/create",validateToken,imageUpload.single('image'), async (req, res
     });
   } catch (err) {
     res.status(500).json(err);
+  }}else{
+    res.status(500).json("token expired")
   }
 });
 //update a post
@@ -95,6 +98,8 @@ router.delete("/delete/:id",validateToken, async (req, res) => {
 //like / dislike a post
 
 router.put("/:id/like",validateToken, async (req, res) => {
+  if(req.data.id===req.body.userId){
+
   try {
     const post = await Post.findById(req.params.id);
     if (!post.likes.includes(req.body.userId)) {
@@ -115,11 +120,14 @@ router.put("/:id/like",validateToken, async (req, res) => {
     }
   } catch (err) {
     res.status(500).json(err);
+  }}else{
+    res.status.apply(500).json("token expired login again")
   }
 });
 
 //comment on post
 router.put("/:id/comment",validateToken, async (req, res) => {
+  if (!post.likes.includes(req.body.userId)) {
   try {
     const post = await Post.findById(req.params.id);
     const user = await User.findById(req.body.userId);
@@ -132,6 +140,9 @@ router.put("/:id/comment",validateToken, async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
+}else{
+  res.status.apply(500).json("token expired login again")
+}
 });
 //get a post
 
