@@ -46,11 +46,14 @@ const paginatedResults=require("../middleware/pagination")
 
 router.post("/create",validateToken,imageUpload.single('image'), async (req, res) => {
   if(req.data.id===req.body.userId){
-   let path1=req.file ? req.file.path:""
+    const user = await User.findById(req.body.userId)
+       let path1=req.file ? req.file.path:""
     const newPost = new Post({
     caption:req.body.caption,
     img:path1,
-    userId:req.body.userId
+    userImg:user.profilePicture,
+    userId:req.body.userId,
+    userName:user.firstname+" "+user.lastname
   });
   try {
     const savedPost = await newPost.save();
@@ -98,11 +101,14 @@ router.delete("/delete/:id",validateToken, async (req, res) => {
 //like / dislike a post
 
 router.put("/:id/like",validateToken, async (req, res) => {
+  console.log(req.data.id)
+  console.log(req.body)
   if(req.data.id===req.body.userId){
 
   try {
     const post = await Post.findById(req.params.id);
-    if (!post.likes.includes(req.body.userId)) {
+    console.log(post)
+    if (! post.likes.includes(req.body.userId)) {
       await post.updateOne({ $push: { likes: req.body.userId } });
       const post1 = await Post.findById(req.params.id);
 
@@ -121,13 +127,17 @@ router.put("/:id/like",validateToken, async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }}else{
-    res.status.apply(500).json("token expired login again")
+    res.status(500).json("token expired login again")
   }
 });
 
 //comment on post
 router.put("/:id/comment",validateToken, async (req, res) => {
-  if (!post.likes.includes(req.body.userId)) {
+  const user = await User.findById(req.body.userId)
+
+  const post = await Post.findById(req.params.id);
+  console.log(req.body)
+ 
   try {
     const post = await Post.findById(req.params.id);
     const user = await User.findById(req.body.userId);
@@ -140,9 +150,7 @@ router.put("/:id/comment",validateToken, async (req, res) => {
   } catch (err) {
     res.status(500).json(err);
   }
-}else{
-  res.status.apply(500).json("token expired login again")
-}
+
 });
 //get a post
 
