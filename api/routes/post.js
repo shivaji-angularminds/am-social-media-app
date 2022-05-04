@@ -46,10 +46,10 @@ const paginatedResults=require("../middleware/pagination")
 
 router.post("/create",validateToken,imageUpload.single('image'), async (req, res) => {
   if(req.data.id===req.body.userId){
-  console.log(req.body)
-  const newPost = new Post({
+   let path1=req.file ? req.file.path:""
+    const newPost = new Post({
     caption:req.body.caption,
-    img:req.file.path,
+    img:path1,
     userId:req.body.userId
   });
   try {

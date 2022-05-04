@@ -13,9 +13,12 @@ router.put(
     if (req.data.id === req.params.id ) {
       if ( req.body.gender && req.body.username) {
         try {
+          const user12= await User.findById(req.params.id);
+
+          let path1=req.file ? req.file.path:user12.profilePicture
           console.log(req.body);
           const user = await User.findByIdAndUpdate(req.params.id, {
-            $set: { ...req.body, profilePicture: req.file.path },
+            $set: { ...req.body,  profilePicture: path1 },
           });
           console.log("bye");
   
