@@ -31,6 +31,8 @@ const Login = () => {
         console.log("data",data);
        
         localStorage.setItem('userId',JSON.stringify(data.user._id));
+        localStorage.setItem('token',JSON.stringify(data.token));
+
         const userId=JSON.parse(localStorage.getItem('userId'));
 
         if(data.user) 
