@@ -10,6 +10,11 @@ const path=require("path")
 dotenv.config({path:"./config/.env"});
 const postRoute = require("./routes/post");
 const cors=require("cors")
+const passportSetup = require("./passport");
+const passport = require("passport");
+const authRoute = require("./routes/auth");
+const cookieSession = require("cookie-session");
+
 // const stateRoute=require("./routes/state")
 // const districtRoute=require("./routes/districts")
 // const stateUpdate=require("./routes/statesOpration")
@@ -29,6 +34,20 @@ const con = async () => {
   // console.log(conn);
 };
 con();
+app.use(
+  cookieSession({ name: "session", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  })
+);
 
 //middleware
 app.use(express.json());

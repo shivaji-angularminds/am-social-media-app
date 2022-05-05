@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const {userValidation}=require("./validation")
 const token=require("jsonwebtoken")
 const validateToken=require("../middleware/verifyToken")
+const passport = require("passport");
+
 
 console.log(User);
 
@@ -88,5 +90,58 @@ router.get("/:id", validateToken, async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+
+
+const CLIENT_URL = "http://localhost:3000/";
+
+router.get("/login/success",async (req, res) => {
+  console.log("success")
+  console.log(req.user._json.email)
+  let localUser = await User.findOne({ email:req.user._json.email})
+  console.log(localUser)
+  if (localUser){
+  if (req.user) {
+    res.status(200).json({
+      success: true,
+      message: "successfull",
+      user: localUser,
+      //   cookies: req.cookies
+    });
+  }
+  }else{
+    res.status("404").json("please signup")
+  }
+});
+
+router.get("/login/failed", (req, res) => {
+  res.status(401).json({
+    success: false,
+    message: "failure",
+  });
+});
+
+router.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect(CLIENT_URL);
+});
+
+router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    successRedirect: CLIENT_URL,
+    failureRedirect: "/login/failed",
+  })
+);
+
+
+
+
+
+
+
+module.exports = router
 
 module.exports = router;

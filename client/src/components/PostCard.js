@@ -90,11 +90,11 @@ export default function PostCard(props1) {
     return(
       postInfo.comments.map((prev) => {
         return (
-          <CardActions>
-            <Typography variant="body2" color="text.primary">
+          <CardActions sx={{marginTop:"5px",paddingLeft:"15px"}} >
+            <Typography sx={{marginBottom:"0px"}} variant="body2" color="text.primary">
               {prev.user}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography sx={{marginBottom:"0px"}} variant="body2" color="text.secondary">
               {prev.comment}
             </Typography>
           </CardActions>

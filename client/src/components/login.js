@@ -7,6 +7,41 @@ const Login = () => {
     const navigate=useNavigate()
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState("");
+    const [user,setUser]=useState(null)
+
+
+    function loginWithGoogle(){
+      var user1
+      const getUser = () => {
+        fetch("http://localhost:8800/auth/login/success", {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": true,
+          },
+        })
+          .then((response) => {
+            if (response.status === 200) return response.json();
+            throw new Error("authentication has been failed!");
+          })
+          .then((resObject) => {
+            user1=resObject.user
+            setUser(resObject.user);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+      getUser();
+
+     if(!user1){
+
+        window.open("http://localhost:5000/auth/google", "_self");
+      }
+      
+    }
 
     const handleLogin = async (e) => {
       e.preventDefault();
@@ -56,7 +91,7 @@ const Login = () => {
         <TextField variant='outlined' label="Email" sx={{ width: 390 }} id="email" value={email} onChange={(e) => { setEmail(e.target.value) }}></TextField><br /><br />
         <TextField variant='outlined' label="Password" id='pswd' sx={{ width: 390 }} value={password} onChange={(e) => { setPassword(e.target.value) }} type="password" /><br /><br />
         <Button variant='contained' color='primary' onClick={handleLogin}>Login</Button> &nbsp; &nbsp;
-        <Button variant='outlined' color='primary' onClick={goWithGoogle}>Continue with Google Account</Button> <br/> <br/>
+        <Button variant='outlined' color='primary' onClick={loginWithGoogle()}>Continue with Google Account</Button> <br/> <br/>
         <a href='http://localhost:3000/signup'>Create New Account</a>
       </div> 
     </div>
