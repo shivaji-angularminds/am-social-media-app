@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, Button, Skeleton, TextareaAutosize, TextField } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Skeleton,
+  TextareaAutosize,
+  TextField,
+  Typography,
+  Box,
+  Modal,
+} from "@mui/material";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import UploadIcon from "@mui/icons-material/Upload";
+import CloudDoneRoundedIcon from "@mui/icons-material/CloudDoneRounded";
+
 import { useNavigate } from "react-router-dom";
 import Header from "./header";
 import "../App.css";
@@ -9,19 +22,31 @@ import PostCard from "./PostCard";
 import debounce from "lodash.debounce";
 
 const Feed = (props) => {
-  
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
   const userId = JSON.parse(localStorage.getItem("userId"));
   //console.log(userId)
   const token = JSON.parse(localStorage.getItem("token"));
   // console.log(token);
-
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const [page, setPage] = useState(1);
   const [renderFlag, setRenderFlag] = useState(false);
   const [userInfo, setuserInfo] = useState({
     file: [],
     filepreview: null,
   });
-
+  const [imageUrl, setImageUrl] = useState("");
   const [posts, setPosts] = useState([]);
   const [caption, setCaption] = useState();
   const [renderPost, setRenderPost] = useState(false);
@@ -40,7 +65,7 @@ const Feed = (props) => {
       .then((res) => res.json())
       .then((data) => {
         if (page === 1) {
-          console.log( "page 1", data.posts.results);
+          console.log("page 1", data.posts.results);
           setPosts(JSON.parse(JSON.stringify(data.posts.results)));
         } else {
           console.log("else    ", [...posts, ...data.posts.results]);
@@ -59,6 +84,7 @@ const Feed = (props) => {
   function addPicture(e) {
     const singleFile = e.target.files[0];
     setPostInfo({ ...postInfo, img: singleFile });
+    setImageUrl(URL.createObjectURL(singleFile));
   }
 
   async function handlePostSaveClick() {
@@ -80,23 +106,48 @@ const Feed = (props) => {
     let responseJson = await res.json();
     console.log(responseJson);
     getAllPosts();
+    handleClose();
+    setImageUrl("");
   }
 
   function renderCreatePost() {
     return (
       <div>
-        <Button component="label">
-          {" "}
-          Add
-          <input type="file" onChange={addPicture} hidden />
-        </Button>
-        <TextField
-          value={caption}
-          onChange={(event) => {
-            setPostInfo({ ...postInfo, caption: event.target.value });
-          }}
-        />
-        <Button onClick={handlePostSaveClick}>Save</Button>
+        <div style={{ display: "flex" }}>
+          <Button component="label" sx={{color:"black"}} >
+            {" "}
+            <UploadIcon></UploadIcon>upload image
+            <input type="file" onChange={addPicture} hidden />
+          </Button>
+          <TextField
+            size="small"
+            value={caption}
+            placeholder="enter caption here"
+            onChange={(event) => {
+              setPostInfo({ ...postInfo, caption: event.target.value });
+            }}
+          />
+        </div>
+        <div style={{display:"flex",flexDirection:"column"}} >
+        <Box
+        component="img"
+        sx={{
+          boxShadow:9,
+          textAlign:"center",
+          marginLeft:"60px",
+          marginTop:"5px",
+          height: 233,
+          width: 350,
+          maxHeight: { xs: 233, md: 167 },
+          maxWidth: { xs: 350, md: 250 },
+        }}
+        alt="upload imgage"
+        src={imageUrl}
+      />
+          <Button onClick={handlePostSaveClick} sx={{color:"blue"}} >
+            <CloudDoneRoundedIcon></CloudDoneRoundedIcon>Save
+          </Button>
+        </div>
       </div>
     );
   }
@@ -129,24 +180,28 @@ const Feed = (props) => {
     });
   };
 
-  if(!posts){
-    
-    return <Skeleton variant="rectangular" width={400} height={500} />
-
-    
+  if (!posts) {
+    return <Skeleton variant="rectangular" width={400} height={500} />;
   }
 
   return (
-    <div style={{backgroundColor:"#EDE4E3"}} >
+    <div style={{ backgroundColor: "#EDE4E3" }}>
       <Header />
       <br />
-      <Button
-        onClick={() => {
-          setRenderFlag(true);
-        }}
-      >
-        Create Post
-      </Button>
+     
+      <div>
+        <Button  style={{float:"right"}} onClick={handleOpen} sx={{color:"black",}} >
+          <AddBoxIcon></AddBoxIcon>Create Post
+        </Button>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>{renderCreatePost()}</Box>
+        </Modal>
+      </div>
       {renderFlag && renderCreatePost()}
       {console.log("po", posts)}
       <div className="feed1">
