@@ -9,6 +9,7 @@ import PostCard from "./PostCard";
 import debounce from "lodash.debounce";
 
 const Feed = (props) => {
+  
   const userId = JSON.parse(localStorage.getItem("userId"));
   //console.log(userId)
   const token = JSON.parse(localStorage.getItem("token"));

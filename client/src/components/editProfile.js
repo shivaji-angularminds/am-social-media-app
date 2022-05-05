@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { createRef, useEffect, useState } from 'react'
 import { Button, TextField, FormControl, FormControlLabel, RadioGroup, Radio} from '@mui/material'
 import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -15,121 +15,131 @@ const EditProfile = () => {
  const token=JSON.parse(localStorage.getItem('token'));
  // console.log(token);
 
-   const loginData=JSON.parse(localStorage.getItem('loginData'));
-  //console.log(loginData)
-
   //---------------------------- GET SPECIFIC USER DETAILS ---------------------------
 
-  const getUserDetails= async () =>{
-   let res = await fetch(`http://localhost:8800/posts/${postId}`, {
+  const getUserDetails= () =>{
+   let res =  fetch(`http://localhost:8800/user/${userId}`, {
       method: "get",
       headers: new Headers({
         Authorization: token,
       }),
     })
-      .then((res) => await res.json())
+      .then((res) =>  res.json())
       .then((data) => {
-        console.log("get user details:",data)
+        localStorage.setItem('userDetails',JSON.stringify(data));
       });
   }
 
+  useEffect(()=>{
+    getUserDetails();
+  })
+ 
 //----------------------------------------------------------------------------------
-
-  const [picture,setPicture]=useState()
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
-  const [gender, setGender] = useState("");
-  const [dob, setDob] = useState("");
-  const [mobile, setMobile] = useState("");
+const userDetails=JSON.parse(localStorage.getItem('userDetails'));
+  const [picture,setPicture]=useState(userDetails.profilePicture)
+  const [username, setUsername] = useState(userDetails.firstname);
+  const [bio, setBio] = useState(userDetails.bio);
+  const [gender, setGender] = useState(userDetails.gender);
+  const [dob, setDob] = useState(userDetails.dob);
+  const [mobile, setMobile] = useState(userDetails.mobile);
   const [isSucces, setSuccess] = useState(null);
 
-  const token=JSON.parse(localStorage.getItem('token'));
-  //console.log(token);
 
-  const userId=JSON.parse(localStorage.getItem('userId'));
-  //console.log(userId)
+  // ------------------ UPLOAD NEW PROFILE PICTURE ------------------------
 
-  const getSpecificUser= async ()=>{
-    try{
-    const res= await axios.get(`http://localhost:8800/user/${userId}`, {
-      headers: {
-        'authorization': token
+  const addPicture=async(e)=>{
+    const singleFile=e.target.files[0];
+    console.log("singleFile",singleFile);
+    setPicture(singleFile)
+      //Check if any file is selected or not
+        //If file selected then create FormData
+        let data = new FormData();
+        data.append('image', singleFile);
+        data.append('userId',userId)
+       // console.log(data)
+                let res = await fetch(
+          `http://localhost:8800/user/edit-profile/editProfilePicture/${userId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'authorization': token
             },
             body: data,
-      }
-    });
-    //console.log( res.data);
-    setGetUser(res.data);    
-    }
-    catch(e) {
-        console.log("error", e);
-    }
+          }
         );
         let responseJson = await res.json();
         alert(responseJson.message);
-}
+ }
 
-useEffect(()=>{
-  getSpecificUser();
-},[]);
-
-
-
-
-  const addPicture=(event)=>{
-    setPicture({
-      ...picture,
-      file:event.target.files[0].name
-    });
-   }
-
-  const editPicture = (e) => {
-    //setEdit(picture);
-    console.log("edited",picture)
+ // ------------------------- EDIT CURRENT PROFILE PICTURE ---------------------
+  const editPicture = async (e) => {
+       // console.log("picture",picture)
+        let data = new FormData();
+        data.append('image', picture);
+        data.append('userId',userId)
+       // console.log(data)
+                let res = await fetch(
+          `http://localhost:8800/user/edit-profile/editProfilePicture/${userId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'authorization': token
+            },
+            body: data,
+          }
+        );
+        let responseJson = await res.json();
+        alert(responseJson.message);
   }
 
-  const removePicture = () => {
-    setPicture(null);
-    console.log("removed",picture)
+  //-----------------------REMOVE PROFILE PICTURE --------------------------
+  const removePicture = async() => {
+    //console.log("picture",picture)
+    let data = new FormData();
+    data.append('userId',userId)
+   // console.log(data)
+            let res = await fetch(
+      `http://localhost:8800/user/edit-profile/deleteProfilePicture/${userId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'authorization': token
+        },
+        body: data,
+      }
+    );
+    let responseJson = await res.json();
+    alert(responseJson.message);
   }
 
   const editProfile = async (e) => {
       e.preventDefault();
-     const formdata = new FormData(); 
-    formdata.append('image', picture.file);                           // upload image in "image" key of database by using formData
-    //console.log(formdata);
-   // console.log("profile",getUser.firstname)
+      //getUserDetails();
+      
+      const formData= new FormData();
 
+      formData.append( 'image',picture);
+      formData.append( 'gender',gender);
+      formData.append( 'dob',dob);
+      formData.append( 'userId',userId);
+      formData.append( 'bio',bio);
+      formData.append( 'username',username);
+      formData.append( 'mobile',mobile);
 
-      const  editData={
-            username,
-            bio, gender, dob, 
-            email, 
-            mobile, picture:picture.file
-        }
-        //console.log("editData",editData);
-
-    const res= await fetch(`http://localhost:8800/user/edit-profile/${userId}`,{
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json",
-            'authorization': token
-          },  
-          body: JSON.stringify({
-            username, bio, gender, dob, email, mobile, picture:picture.file
-          })
-        });
-
-        const data = await res.json();
-        console.log("data",data);
-
-        // if(data.user) 
-        // {
-        //   window.alert(data.message);
-        // } 
-        // else {
-        //   window.alert(data);
-        // }
+       // console.log(data)
+                let res = await fetch(
+          `http://localhost:8800/user/edit-profile/${userId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'authorization': token
+            },
+            body: formData,
+          }
+        );
+        let responseJson = await res.json();
+        alert(responseJson.message);
+  
   }
 
   return (
@@ -167,7 +177,6 @@ useEffect(()=>{
               renderInput={(params) => <TextField {...params} />}
             />
           </LocalizationProvider><br /><br />
-          <TextField variant='outlined' label="Email" sx={{ width: 270 }} id="email" value={email} onChange={(e) => { setEmail(e.target.value) }} required></TextField><br /><br />
           <TextField variant='outlined' label="Mobile" sx={{ width: 270 }} id="mobile" value={mobile} onChange={(e) => { setMobile(e.target.value) }} required></TextField><br /><br />
           <Button variant='contained' onClick={editProfile}>Edit</Button>
         </form>
