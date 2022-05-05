@@ -12,7 +12,6 @@ const postRoute = require("./routes/post");
 const cors=require("cors")
 const passportSetup = require("./passport");
 const passport = require("passport");
-const authRoute = require("./routes/auth");
 const cookieSession = require("cookie-session");
 
 // const stateRoute=require("./routes/state")
