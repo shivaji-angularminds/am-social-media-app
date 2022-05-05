@@ -181,7 +181,6 @@ router.get("/timeline/:userId",validateToken, async (req, res) => {
 });
 
 //get all posts
-
 router.get("/",validateToken,paginatedResults(Post), async (req, res) => {
   const data=res.paginatedResults
 
