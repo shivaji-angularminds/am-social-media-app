@@ -5,17 +5,42 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { DatePicker } from "@mui/lab";
 import Header from './header'
 import axios from 'axios';
+import ChangePassword from './changePassword';
 
 
 const EditProfile = () => {
+  const userId=JSON.parse(localStorage.getItem('userId'));
+  //console.log(userId)
+
+ const token=JSON.parse(localStorage.getItem('token'));
+ // console.log(token);
+
+   const loginData=JSON.parse(localStorage.getItem('loginData'));
+  //console.log(loginData)
+
+  //---------------------------- GET SPECIFIC USER DETAILS ---------------------------
+
+  const getUserDetails= async () =>{
+   let res = await fetch(`http://localhost:8800/posts/${postId}`, {
+      method: "get",
+      headers: new Headers({
+        Authorization: token,
+      }),
+    })
+      .then((res) => await res.json())
+      .then((data) => {
+        console.log("get user details:",data)
+      });
+  }
+
+//----------------------------------------------------------------------------------
+
+  const [picture,setPicture]=useState()
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState("");
-  const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
-  const [picture, setPicture] = useState({file:[]});
-  const [getUser, setGetUser] = useState();
   const [isSucces, setSuccess] = useState(null);
 
   const token=JSON.parse(localStorage.getItem('token'));
@@ -29,6 +54,8 @@ const EditProfile = () => {
     const res= await axios.get(`http://localhost:8800/user/${userId}`, {
       headers: {
         'authorization': token
+            },
+            body: data,
       }
     });
     //console.log( res.data);
@@ -37,6 +64,9 @@ const EditProfile = () => {
     catch(e) {
         console.log("error", e);
     }
+        );
+        let responseJson = await res.json();
+        alert(responseJson.message);
 }
 
 useEffect(()=>{
