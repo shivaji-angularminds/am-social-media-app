@@ -6,7 +6,6 @@ import { DatePicker } from "@mui/lab";
 import Header from './header'
 import axios from 'axios';
 import ChangePassword from './changePassword';
-<<<<<<< HEAD
 
 
 const EditProfile = () => {
@@ -52,71 +51,23 @@ const userDetails=JSON.parse(localStorage.getItem('userDetails'));
     const singleFile=e.target.files[0];
     console.log("singleFile",singleFile);
     setPicture(singleFile)
-=======
-const EditProfile = () => {
-  const userId=JSON.parse(localStorage.getItem('userId'));
-  //console.log(userId)
- const token=JSON.parse(localStorage.getItem('token'));
- // console.log(token);
-   const loginData=JSON.parse(localStorage.getItem('loginData'));
-  //console.log(loginData)
-  const [picture,setPicture]=useState()
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
-  const [gender, setGender] = useState("");
-  const [dob, setDob] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSucces, setSuccess] = useState(null);
-  const [userInfo,setUserInfo]=useState()
-
-
-  useEffect(()=>{
-         fetch(`http://localhost:8800/user/${userId}`,{ 
-          method: 'get', 
-          headers: new Headers({
-            'Authorization': token, 
-         
-          })
-       
-        }).then((res)=>res.json()).then((data)=>{
-          setUserInfo(data)
-         })
-  },[username,picture])
-
-
-  console.log(userInfo)
-
-  // ------------------ UPLOAD NEW PROFILE PICTURE ------------------------
-  const addPicture=async(e)=>{
-    const singleFile=e.target.files[0];
-    console.log("singleFile",singleFile);
->>>>>>> afa1030d1e74ec4a08a4dca0b75ad425a71062e5
       //Check if any file is selected or not
         //If file selected then create FormData
         let data = new FormData();
         data.append('image', singleFile);
         data.append('userId',userId)
-<<<<<<< HEAD
        // console.log(data)
-=======
-        console.log(data)
->>>>>>> afa1030d1e74ec4a08a4dca0b75ad425a71062e5
                 let res = await fetch(
           `http://localhost:8800/user/edit-profile/editProfilePicture/${userId}`,
           {
             method: 'PUT',
             headers: {
-<<<<<<< HEAD
-=======
-            
->>>>>>> afa1030d1e74ec4a08a4dca0b75ad425a71062e5
               'authorization': token
             },
             body: data,
           }
         );
         let responseJson = await res.json();
-<<<<<<< HEAD
         alert(responseJson.message);
  }
 
@@ -159,69 +110,19 @@ const EditProfile = () => {
     );
     let responseJson = await res.json();
     alert(responseJson.message);
-=======
-        console.log("responseJson")
- }
- // ------------------------- EDIT CURRENT PROFILE PICTURE ---------------------
-  const editPicture = (e) => {
-    const editImage= async () =>{
-      const singleFile=e.target.files[0]
-      const data = new FormData();
-        data.append('userId',userId)
-        data.append('image', singleFile);
-      let res = await fetch(
-        `http://localhost:8800/user/edit-profile/editProfilePicture/${userId}`,
-        {
-          method: 'PUT',
-          body: {userId, data},
-          headers: {
-            'authorization': token
-          },
-        }
-      );
-      let responseJson = await res.json();
-      console.log("edit picture",responseJson);
-    }
-    alert("profile picture edited successfully");
-  }
-  //-----------------------REMOVE PROFILE PICTURE --------------------------
-  const removePicture = () => {
-    const removeImage= async () =>{
-      const data = new FormData();
-        data.append('userId',userId)
-      let res = await fetch(
-        `http://localhost:8800/user/edit-profile/deleteProfilePicture/${userId}`,
-        {
-          method: 'PUT',
-          body: data,
-          headers: {
-            'authorization': token
-          },
-        }
-      );
-      let responseJson = await res.json();
-      console.log("remove picture",responseJson);
-    }
-    alert("profile picture removed successfully");
->>>>>>> afa1030d1e74ec4a08a4dca0b75ad425a71062e5
   }
   const editProfile = async (e) => {
       e.preventDefault();
-<<<<<<< HEAD
       //getUserDetails();
       
       const formData= new FormData();
 
-=======
-      const formData= new FormData();
->>>>>>> afa1030d1e74ec4a08a4dca0b75ad425a71062e5
       formData.append( 'image',picture);
       formData.append( 'gender',gender);
       formData.append( 'dob',dob);
       formData.append( 'userId',userId);
       formData.append( 'bio',bio);
       formData.append( 'username',username);
-<<<<<<< HEAD
       formData.append( 'mobile',mobile);
 
        // console.log(data)
@@ -238,20 +139,6 @@ const EditProfile = () => {
         let responseJson = await res.json();
         alert(responseJson.message);
   
-=======
-      formData.append( 'password',password);
-      const res = await axios({
-        method: 'put',
-        url: `http://localhost:8800/user/edit-profile/${userId}`,
-        headers:{
-            "Content-Type": "multipart/form-data",
-            'authorization' : token
-        },
-        data: formData
-    });
-     const data = await res.json();
-     console.log("data",data);
->>>>>>> afa1030d1e74ec4a08a4dca0b75ad425a71062e5
   }
   return (
     <div className='profile-container'>
@@ -288,11 +175,7 @@ const EditProfile = () => {
               renderInput={(params) => <TextField {...params} />}
             />
           </LocalizationProvider><br /><br />
-<<<<<<< HEAD
           <TextField variant='outlined' label="Mobile" sx={{ width: 270 }} id="mobile" value={mobile} onChange={(e) => { setMobile(e.target.value) }} required></TextField><br /><br />
-=======
-          <TextField variant='outlined' label="Password" sx={{ width: 270 }} id="password" value={password} onChange={(e) => { setPassword(e.target.value) }} required></TextField><br /><br />
->>>>>>> afa1030d1e74ec4a08a4dca0b75ad425a71062e5
           <Button variant='contained' onClick={editProfile}>Edit</Button>
         </form>
       </div>
