@@ -3,6 +3,16 @@
   text-align: center;
 }
 
+.editform{
+  background: #f3f3f3;
+  padding: 20px;
+}
+
+.login-button{
+    display: flex;
+    
+}
+
 .feed{
   width: auto;
   text-align: center;
@@ -46,16 +56,12 @@
    width: 100%;
    height: auto;
    text-align: center;
-  position: absolute;
-  margin-left: 300px;
   margin-top: 120px;
  }
 
  .loginbox{
    background: #f3f3f3;
-   width: 400px;
    padding: 40px;
-   align-items: center;
  }
 
  /* ------------- Sign Up --------------   */
@@ -64,16 +70,12 @@
   width: 100%;
   height: auto;
   text-align: center;
- position: absolute;
- margin-left: 300px;
- margin-top: 120px;
+ margin-top: 100px;
  }
 
  .signupbox{
   background: #f3f3f3;
-   width: 400px;
    padding: 40px;
-   align-items: center;
  }
 
 

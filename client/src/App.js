@@ -33,7 +33,7 @@ function App() {
     <div className="App">
       <Router>
       <Routes>
-          <Route path='/feed' element={  <Feed length1={length} />} /> 
+          <Route path='/feed/:id' element={  <Feed length1={length} />} /> 
           <Route path='/' element={<Navigate to='/feed/:id' />} />
           {/* <Route element={<ProtectedRoutes />}> */}
           <Route path='/signup' element={<SignUp />} />
