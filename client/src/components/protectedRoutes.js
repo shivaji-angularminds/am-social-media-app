@@ -2,6 +2,7 @@ import React from 'react'
 import { Outlet, useNavigate,Navigate} from 'react-router-dom';
 const token = JSON.parse(localStorage.getItem("token"));
 
+console.log(token)
 const useAuth = () => {
 
     const user = {loggedIn:false};

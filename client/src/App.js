@@ -10,22 +10,9 @@ import ProtectedRoutes from './components/protectedRoutes';
 
 function App() {
 
-  const [length, setLength] = useState();
   const token = JSON.parse(localStorage.getItem("token"));
 
-  useEffect(() => {
-    fetch(`http://localhost:8800/posts`, {
-      method: "get",
-      headers: new Headers({
-        Authorization: token,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setLength(data.posts.results.length)
-      });
-  }, []);
-
+console.log(token)
   
 
 
@@ -35,12 +22,12 @@ function App() {
       <Routes>
       <Route path='/sign-up' element={<SignUp />} />
           <Route path='/login' element={<Login />} />
+          <Route path='/feed' element={  <Feed  />} /> 
+          <Route path='/editprofile/:id' element={<EditProfile />} />
 
           <Route element={<ProtectedRoutes />}>
           <Route path='/' element={<Navigate to='/feed' />} />
 
-          <Route path='/feed' element={  <Feed length1={length} />} /> 
-\          <Route path='/editprofile/:id' element={<EditProfile />} />
           <Route path='/changepassword/:id' element={<ChangePassword />} />
           <Route path='/logout/:id' element={<Logout />} />
           </Route>

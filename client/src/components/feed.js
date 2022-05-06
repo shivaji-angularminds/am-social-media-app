@@ -176,6 +176,7 @@ console.log(token)
   if (!posts) {
     return <Skeleton variant="rectangular" width={400} height={500} />;
   }
+  console.log(token)
   if(!token){
     return <Navigate to="/login" />
   }

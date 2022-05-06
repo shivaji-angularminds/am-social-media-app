@@ -4,6 +4,7 @@ import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { DatePicker } from "@mui/lab";
 import Header from './header'
+import {Navigate} from "react-router-dom"
 import axios from 'axios';
 import ChangePassword from './changePassword';
 
@@ -23,7 +24,7 @@ const EditProfile = () => {
       headers: new Headers({
         Authorization: token,
       }),
-    })
+    }) 
       .then((res) =>  res.json())
       .then((data) => {
         localStorage.setItem('userDetails',JSON.stringify(data));
@@ -140,6 +141,11 @@ const userDetails=JSON.parse(localStorage.getItem('userDetails'));
         alert(responseJson.message);
   
   }
+  console.log(token)
+  if(!token){
+    return <Navigate to="/login" />
+  }
+
   return (
     <div className='profile-container'>
       <Header /><br />
