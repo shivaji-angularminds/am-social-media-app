@@ -20,15 +20,17 @@ console.log(token)
     <div className="App">
       <Router>
       <Routes>
-          <Route path='/feed/' element={  <Feed length1={length} />} /> 
-          <Route path='/' element={<Navigate to='/feed/' />} />
-          {/* <Route element={<ProtectedRoutes />}> */}
-          <Route path='/signup' element={<SignUp />} />
+      <Route path='/sign-up' element={<SignUp />} />
           <Route path='/login' element={<Login />} />
-          {/* </Route> */}
+          <Route path='/feed' element={  <Feed  />} /> 
           <Route path='/editprofile/:id' element={<EditProfile />} />
+
+          <Route element={<ProtectedRoutes />}>
+          <Route path='/' element={<Navigate to='/feed' />} />
+
           <Route path='/changepassword/:id' element={<ChangePassword />} />
           <Route path='/logout/:id' element={<Logout />} />
+          </Route>
 
         </Routes>
       </Router>

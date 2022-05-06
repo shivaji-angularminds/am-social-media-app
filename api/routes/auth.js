@@ -97,6 +97,25 @@ router.get("/:id", validateToken, async (req, res) => {
 });
 
 
+//Google Login
+router.post("/google-login", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const tok = generateToken(user);
+      res.status(200).json({
+        user: user,
+        token: tok,
+        message: "login with google successfully",
+      });
+    } else {
+      res.json({ status: false, error: "user not found"});
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 
 
 

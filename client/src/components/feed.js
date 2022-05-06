@@ -21,6 +21,7 @@ import axios from "axios";
 import { width } from "@mui/system";
 import PostCard from "./PostCard";
 import debounce from "lodash.debounce";
+import Loading from "./Loading"
 
 const Feed = (props) => {
   const style = {
@@ -48,20 +49,18 @@ console.log(token)
   const handleClose = () => setOpen(false);
   const [page, setPage] = useState(1);
   const [renderFlag, setRenderFlag] = useState(false);
-  const [userInfo, setuserInfo] = useState({
-    file: [],
-    filepreview: null,
-  });
+
   const [imageUrl, setImageUrl] = useState("");
   const [posts, setPosts] = useState([]);
-  const [caption, setCaption] = useState();
-  const [renderPost, setRenderPost] = useState(false);
   const [postInfo, setPostInfo] = useState({
     caption: "",
     img: "",
   });
 
+  const[loading,setLoading]=useState(false)
+
   function getAllPosts() {
+    setLoading(true)
     fetch(`http://localhost:8800/posts?page=${page}&limit=2`, {
       method: "get",
       headers: new Headers({
@@ -80,6 +79,9 @@ console.log(token)
           );
         }
       });
+      
+      setTimeout(function(){setLoading(false) }, 1000);
+
   }
 
   useEffect(() => {
@@ -127,7 +129,7 @@ console.log(token)
           </Button>
           <TextField
             size="small"
-            value={caption}
+            value={postInfo.caption}
             placeholder="enter caption here"
             onChange={(event) => {
               setPostInfo({ ...postInfo, caption: event.target.value });
@@ -173,8 +175,13 @@ console.log(token)
   }, 100);
 
 
-  if (!posts) {
-    return <Skeleton variant="rectangular" width={400} height={500} />;
+  if (loading) {
+    return (
+      <div sx={{ maxWidth: 500, marginLeft: "auto", marginRight: "auto", marginTop:5, boxShadow: 10 }}>
+      <Header/>
+      <Loading/>
+      </div>
+    )
   }
   console.log(token)
   if(!token){

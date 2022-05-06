@@ -101,7 +101,7 @@ export default function PostCard(props1) {
         );
       }))
     } else{
-      return(<Typography variant="body2" color="text.secondary">
+      return(<Typography variant="body2" color="text.secondary" sx={{paddingLeft:"15px"}} >
       no comment to show
       </Typography>)
     }
