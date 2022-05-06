@@ -49,7 +49,7 @@ const Login = () => {
           window.alert(data);
         }
     //---------------------------------------------------------------------------------
-      navigate(`/feed/${userId}`)
+      navigate(`/feed`);
         
     }
 

@@ -84,3 +84,57 @@
   display: block;
  
 }
+
+/* ----------------Phone Number------------------- */
+.page{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tel-box{
+  display: flex;
+  margin: 1rem;
+  margin-top: 0;
+}
+.select-box{
+  margin: 1rem;
+  width: 60px;
+  height: 40px;
+}
+.flag-img{
+  width: 60px;
+  height: 40px;
+  position: absolute;
+  border: 1px solid #bababa;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+.select-box select{
+  font-family: 'Lato', sans-serif;
+  width: 60px;
+  height: 40px;
+  background: none;
+  position: absolute;
+  border: none;
+  font-size: 1rem;
+  padding-left: 4rem;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.tel{
+  font-family: 'Lato', sans-serif;
+  width: 200px;
+  height: 40px;
+  background: none;
+  border: 1px solid #bababa;
+  outline: none;
+  margin: 1rem;
+  font-size: 1rem;
+  padding-left: 1.5rem;
+  color: black;
+  font-weight: thick;
+  border-radius: 5px;
+}
+/* ----------------------------------------------------------------- */

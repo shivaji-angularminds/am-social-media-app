@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react'
+import React, { useNavigate, useEffect, useState } from 'react'
 import { Button, TextField, FormControl, FormControlLabel, RadioGroup, Radio} from '@mui/material'
 import { LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -6,9 +6,11 @@ import { DatePicker } from "@mui/lab";
 import Header from './header'
 import axios from 'axios';
 import ChangePassword from './changePassword';
+// import PhoneNumber from './phoneNumber';
 
 
 const EditProfile = () => {
+      const navigate=useNavigate();
   const userId=JSON.parse(localStorage.getItem('userId'));
   //console.log(userId)
 
@@ -41,7 +43,7 @@ const userDetails=JSON.parse(localStorage.getItem('userDetails'));
   const [bio, setBio] = useState(userDetails.bio);
   const [gender, setGender] = useState(userDetails.gender);
   const [dob, setDob] = useState(userDetails.dob);
-  const [mobile, setMobile] = useState(userDetails.mobile);
+  const [phone, setPhone] = useState(userDetails.mobile);
   const [isSucces, setSuccess] = useState(null);
 
 
@@ -123,7 +125,7 @@ const userDetails=JSON.parse(localStorage.getItem('userDetails'));
       formData.append( 'userId',userId);
       formData.append( 'bio',bio);
       formData.append( 'username',username);
-      formData.append( 'mobile',mobile);
+      formData.append( 'mobile',phone);
 
        // console.log(data)
                 let res = await fetch(
@@ -138,7 +140,7 @@ const userDetails=JSON.parse(localStorage.getItem('userDetails'));
         );
         let responseJson = await res.json();
         alert(responseJson.message);
-  
+          navigate('/feed')
   }
   return (
     <div className='profile-container'>
@@ -175,7 +177,7 @@ const userDetails=JSON.parse(localStorage.getItem('userDetails'));
               renderInput={(params) => <TextField {...params} />}
             />
           </LocalizationProvider><br /><br />
-          <TextField variant='outlined' label="Mobile" sx={{ width: 270 }} id="mobile" value={mobile} onChange={(e) => { setMobile(e.target.value) }} required></TextField><br /><br />
+          {/* <PhoneNumber phone={phone} setPhone={setPhone}/> */}
           <Button variant='contained' onClick={editProfile}>Edit</Button>
         </form>
       </div>

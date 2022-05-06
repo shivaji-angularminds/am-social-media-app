@@ -44,7 +44,7 @@ const SignUp = () => {
           window.alert(data.message);
         }
     //---------------------------------------------------------------------------------
-
+    navigate('/login');
   }
   const login = () => {
     navigate('/login')

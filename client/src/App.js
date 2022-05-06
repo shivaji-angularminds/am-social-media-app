@@ -33,13 +33,13 @@ function App() {
     <div className="App">
       <Router>
       <Routes>
-          <Route path='/feed/:id' element={  <Feed length1={length} />} /> 
-          <Route path='/' element={<Navigate to='/feed/:id' />} />
+          <Route path='/feed/' element={  <Feed length1={length} />} /> 
+          <Route path='/' element={<Navigate to='/feed/' />} />
           {/* <Route element={<ProtectedRoutes />}> */}
           <Route path='/signup' element={<SignUp />} />
           <Route path='/login' element={<Login />} />
           {/* </Route> */}
-          <Route path='/editprofile/:id' element={<EditProfile />} />
+          <Route path='/editprofile/' element={<EditProfile />} />
           <Route path='/changepassword/:id' element={<ChangePassword />} />
           <Route path='/logout/:id' element={<Logout />} />
         </Routes>

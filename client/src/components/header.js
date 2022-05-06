@@ -27,12 +27,6 @@ const Header = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
   const userDetails=JSON.parse(localStorage.getItem('userDetails'));
   console.log("profilePicture",userDetails.profilePicture);
-  const signUp = () => {
-    navigate('/signup')
-  }
-  const login = () => {
-    navigate('/login')
-  }
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -59,7 +53,7 @@ const Header = () => {
 
   const handleCloseUserMenu = (setting) => {
     if (setting === 'Profile') {
-      navigate(`/editprofile/${userId}`)
+      navigate(`/editprofile`)
     }
     else if (setting === 'Reset Password') {
       navigate(`/changepassword/${userId}`)

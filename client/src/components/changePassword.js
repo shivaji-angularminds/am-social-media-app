@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { TextField, Button, Box, Modal } from '@mui/material';
-
+import { useNavigate } from 'react-router-dom';
 
 const style = {
   position: 'absolute',
@@ -15,6 +15,7 @@ const style = {
 };
 
 const ChangePassword = ({open,handleClose}) => {
+ const navigate=useNavigate();
   const [previousPassword, setPreviousPassword]=useState("");
   const [newPassword, setNewPassword]=useState("");
   const [confirmPassword, setConfirmPassword]=useState("");
@@ -49,8 +50,8 @@ const ChangePassword = ({open,handleClose}) => {
       });
 
       const data = await res.json();
-     alert(data.message);
-        
+     console.log(data);
+        navigate('/feed');
       
   }
 
@@ -58,9 +59,9 @@ const ChangePassword = ({open,handleClose}) => {
     <div>
     <Box sx={style}>
       <h1>Change password</h1>
-      <TextField label="Current password" value={previousPassword} onChange={(e)=>{setPreviousPassword(e.target.value)}}></TextField><br/><br/>
-      <TextField label="New password" value={newPassword} onChange={(e)=>{setNewPassword(e.target.value)}}></TextField><br/><br/>
-      <TextField label="Confirm password" value={confirmPassword} onChange={(e)=>{setConfirmPassword(e.target.value)}}></TextField><br/><br/>
+      <TextField label="Current password" value={previousPassword} onChange={(e)=>{setPreviousPassword(e.target.value)}} type="password"></TextField><br/><br/>
+      <TextField label="New password" value={newPassword} onChange={(e)=>{setNewPassword(e.target.value)}} type="password"></TextField ><br/><br/>
+      <TextField label="Confirm password" value={confirmPassword} onChange={(e)=>{setConfirmPassword(e.target.value)}} type="password"></TextField><br/><br/>
       <Button onClick={resetPassword} variant="contained">Reset</Button>
     </Box>
     </div>
