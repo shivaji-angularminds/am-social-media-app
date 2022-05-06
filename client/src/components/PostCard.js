@@ -166,7 +166,7 @@ export default function PostCard(props1) {
             onClick={() => {
               setCommentFlag((prev) => !prev);
             }}
-          />
+          />{postInfo.comments.length}
         </IconButton>
         {commentflag && (
           <div>
