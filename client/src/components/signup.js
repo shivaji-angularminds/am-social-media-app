@@ -43,6 +43,7 @@ const SignUp = () => {
         else {
           window.alert(data.message);
         }
+        login()
     //---------------------------------------------------------------------------------
     navigate('/login');
   }

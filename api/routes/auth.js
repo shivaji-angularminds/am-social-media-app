@@ -58,6 +58,11 @@ console.log(error)
 
 //LOGIN
 router.post("/login", async (req, res) => {
+
+  if(!req.body.email || !req.body.password){
+    return res.status(500).json("please provide email and password")
+  }
+
   try {
     const user = await User.findOne({ email: req.body.email });
     !user && res.status(404).json("user not found");
@@ -93,55 +98,7 @@ router.get("/:id", validateToken, async (req, res) => {
 
 
 
-const CLIENT_URL = "http://localhost:3000/";
-
-router.get("/login/success",async (req, res) => {
-  console.log("success")
-  console.log(req.user._json.email)
-  let localUser = await User.findOne({ email:req.user._json.email})
-  console.log(localUser)
-  if (localUser){
-  if (req.user) {
-    res.status(200).json({
-      success: true,
-      message: "successfull",
-      user: localUser,
-      //   cookies: req.cookies
-    });
-  }
-  }else{
-    res.status("404").json("please signup")
-  }
-});
-
-router.get("/login/failed", (req, res) => {
-  res.status(401).json({
-    success: false,
-    message: "failure",
-  });
-});
-
-router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect(CLIENT_URL);
-});
-
-router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
-
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: CLIENT_URL,
-    failureRedirect: "/login/failed",
-  })
-);
 
 
-
-
-
-
-
-module.exports = router
 
 module.exports = router;
