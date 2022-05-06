@@ -9,11 +9,12 @@ import {
   Box,
   Modal,
 } from "@mui/material";
+import { Navigate } from 'react-router-dom';
+
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import UploadIcon from "@mui/icons-material/Upload";
 import CloudDoneRoundedIcon from "@mui/icons-material/CloudDoneRounded";
 
-import { useNavigate } from "react-router-dom";
 import Header from "./header";
 import "../App.css";
 import axios from "axios";
@@ -36,7 +37,12 @@ const Feed = (props) => {
   const userId = JSON.parse(localStorage.getItem("userId"));
   //console.log(userId)
   const token = JSON.parse(localStorage.getItem("token"));
+console.log(token)
+
   // console.log(token);
+
+  
+
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -152,18 +158,12 @@ const Feed = (props) => {
     );
   }
 
-  const handleUploadImage = (event) => {
-    setuserInfo({
-      ...userInfo,
-      file: event.target.files[0],
-      filepreview: URL.createObjectURL(event.target.files[0]),
-    });
-  };
 
-  const handleCaption = (event) => {
-    setCaption(event.target.value);
-  };
+
+ 
+
   window.onscroll = debounce(() => {
+    console.log("hdbwfjvj")
     if (
       window.innerHeight + document.documentElement.scrollTop ===
       document.documentElement.offsetHeight
@@ -171,17 +171,13 @@ const Feed = (props) => {
       setPage((prev) => prev + 1);
     }
   }, 100);
-  const submit = async () => {
-    const formdata = new FormData();
-    formdata.append("avtar", userInfo.file);
 
-    axios.post("http://localhost:8800/api/uploadimg", formdata, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-  };
 
   if (!posts) {
     return <Skeleton variant="rectangular" width={400} height={500} />;
+  }
+  if(!token){
+    return <Navigate to="/login" />
   }
 
   return (

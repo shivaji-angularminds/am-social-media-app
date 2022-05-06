@@ -26,12 +26,7 @@ const Header = () => {
   const navigate = useNavigate();
   const userId = JSON.parse(localStorage.getItem('userId'));
   const userDetails=JSON.parse(localStorage.getItem('userDetails'));
-  const signUp = () => {
-    navigate('/signup')
-  }
-  const login = () => {
-    navigate('/login')
-  }
+ 
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);

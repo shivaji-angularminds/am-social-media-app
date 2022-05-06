@@ -23,7 +23,7 @@ const Login = () => {
        // console.log("loginData",loginData);
 
          // --------------------- post data from login form ---------------------------------
-         const res= await fetch("http://localhost:8800/user//login",{
+         const res= await fetch("http://localhost:8800/user/login",{
           method:"POST",
           headers:{
             "Content-Type":"application/json"
@@ -49,7 +49,7 @@ const Login = () => {
           window.alert(data);
         }
     //---------------------------------------------------------------------------------
-      navigate(`/feed/${userId}`)
+      navigate(`/`)
         
     }
 
@@ -75,7 +75,7 @@ const Login = () => {
               cookiePolicy={"single_host_origin"}
             />)
      }
-      <p>Don't have an Account ?  <a href='http://localhost:3000/signup'> SignUp </a></p>
+      {/* <p>Don't have an Account ?  <a href='http://localhost:3000/sign-up'> SignUp </a></p> */}
       </div> 
     </div>
   )

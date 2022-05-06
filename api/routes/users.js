@@ -3,6 +3,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const validateToken = require("../middleware/verifyToken");
 const imageUpload = require("../middleware/uploadimg");
+const { userValidation } = require("./passwordValidation");
 
 //update user
 router.put(
@@ -10,18 +11,18 @@ router.put(
   validateToken,
   imageUpload.single("image"),
   async (req, res) => {
-    if (req.data.id === req.params.id ) {
-      if ( req.body.gender && req.body.username) {
+    if (req.data.id === req.params.id) {
+      if (req.body.gender && req.body.username) {
         try {
-          const user12= await User.findById(req.params.id);
+          const user12 = await User.findById(req.params.id);
 
-          let path1=req.file ? req.file.path:user12.profilePicture
+          let path1 = req.file ? req.file.path : user12.profilePicture;
           console.log(req.body);
           const user = await User.findByIdAndUpdate(req.params.id, {
-            $set: { ...req.body,  profilePicture: path1 },
+            $set: { ...req.body, profilePicture: path1 },
           });
           console.log("bye");
-  
+
           //dfvdfvdfbd
           res.status(200).json({
             user: user,
@@ -29,16 +30,14 @@ router.put(
           });
         } catch (err) {
           console.log(err);
-  
+
           return res.status(500).json(err);
         }
-       
       } else {
         //check required things
         let str = {
           flag1: true,
           flag2: true,
-          
         };
         if (!req.body.gender) {
           str.flag1 = false;
@@ -46,17 +45,14 @@ router.put(
         if (!req.body.username) {
           str.flag2 = false;
         }
-        
 
         return res.status(403).json({
           message: [
             !str.flag1 && "please provide gender",
             !str.flag2 && "please provide username",
-            
           ],
         });
       }
-     
     } else {
       return res.status(403).json("You can update only your account!");
     }
@@ -79,39 +75,33 @@ router.delete("/:id", async (req, res) => {
 
 //get a user
 router.get("/:id", validateToken, async (req, res) => {
-  if(req.data.id===req.params.id){
-  try {
-    const user = await User.findById(req.params.id);
-    const { password, updatedAt, ...other } = user._doc;
-    res.status(200).json(other);
-  } catch (err) {
-    res.status(500).json(err);
-  }}
-  else{
+  if (req.data.id === req.params.id) {
+    try {
+      const user = await User.findById(req.params.id);
+      const { password, updatedAt, ...other } = user._doc;
+      res.status(200).json(other);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  } else {
     res.status(500).json("you can access your profile only");
   }
 });
 
 // delete profile picture
 router.put("/deleteProfilePicture/:id", validateToken, async (req, res) => {
-  if (req.data.id === req.params.id ) {
-    
+  if (req.data.id === req.params.id) {
+    try {
+      const user = await User.findByIdAndUpdate(req.params.id, {
+        $set: { profilePicture: "" },
+      });
 
-      try {
-        
-        const user = await User.findByIdAndUpdate(req.params.id,{
-          $set: {  profilePicture:"" },
-        })
-
-        res.status(200).json({
-          message:"profile picture deleted successfully"
-        })
-  
-     
-      } catch (err) {
-        return res.status(500).json({ success: false, message: err });
-      }
-    
+      res.status(200).json({
+        message: "profile picture deleted successfully",
+      });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: err });
+    }
   } else {
     return res.status(403).json("You can update only your account!");
   }
@@ -128,35 +118,37 @@ router.get("/", validateToken, async (req, res) => {
   }
 });
 //edit profile profilePicture
-router.put("/editProfilePicture/:id", validateToken,imageUpload.single('image'), async (req, res) => {
-  if (req.data.id === req.params.id ) {
-    
-
+router.put(
+  "/editProfilePicture/:id",
+  validateToken,
+  imageUpload.single("image"),
+  async (req, res) => {
+    if (req.data.id === req.params.id) {
       try {
-        
-        const user = await User.findByIdAndUpdate(req.params.id,{
-          $set: {  profilePicture:req.file.path },
-        })
+        const user = await User.findByIdAndUpdate(req.params.id, {
+          $set: { profilePicture: req.file.path },
+        });
 
         res.status(200).json({
-          message:"profile picture edited successfully"
-        })
-  
-     
+          message: "profile picture edited successfully",
+        });
       } catch (err) {
         return res.status(500).json({ success: false, message: err });
       }
-    
-  } else {
-    return res.status(403).json("You can update only your account!");
+    } else {
+      return res.status(403).json("You can update only your account!");
+    }
   }
-});
-
+);
 
 //change password
 router.put("/changepassword/:id", validateToken, async (req, res) => {
   if (req.data.id === req.params.id || req.body.isAdmin) {
     if (req.body.previousPassword && req.body.newPassword) {
+      let { error } = userValidation({ password: req.body.newPassword });
+      if(error){
+        return res.status(500).json(error)
+      }
       const user = await User.findByIdAndUpdate(req.params.id);
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(req.body.previousPassword, salt);

@@ -1,5 +1,6 @@
 import React from 'react'
-import { Outlet, useNavigate} from 'react-router-dom';
+import { Outlet, useNavigate,Navigate} from 'react-router-dom';
+const token = JSON.parse(localStorage.getItem("token"));
 
 const useAuth = () => {
 
@@ -10,7 +11,7 @@ const useAuth = () => {
 const ProtectedRoutes = () => {
     const navigate=useNavigate();
     const isAuth=useAuth();
-  return isAuth ? <Outlet /> : navigate('/signup') ;
+  return token ? <Outlet /> :  <Navigate to="/login" /> ;
 }
 
 export default ProtectedRoutes;
